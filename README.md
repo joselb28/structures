@@ -1,4 +1,4 @@
-# CarNBus
+# CarNBus (transit_app)
 
 Simulation multi-agents de transport urbain (bus + Uber) — projet de structures de données, Java 21 / Swing.
 
