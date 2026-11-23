@@ -77,7 +77,7 @@ class UberTest {
         assertEquals(0, uber.currentNode());
         assertTrue(uber.isFree());
         assertEquals(1, metrics.delivered());
-        // pris en charge à 4, déposé à 0 : 4 -> 2 -> 1 -> 0 = trois tronçons, trois minutes dans la voiture
+        // pris en charge à 4, déposé à 0 : 4 -> 2 -> 1 -> 0 = quatre tronçons, quatre minutes dans la voiture
         assertEquals(FARES.uberRideCents(4L * Time.TICKS_PER_SIM_MINUTE), customer.paidCents());
         assertEquals(customer.paidCents(), metrics.uberRevenueCents());
     }

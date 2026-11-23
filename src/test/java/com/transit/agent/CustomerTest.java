@@ -88,8 +88,7 @@ class CustomerTest {
         assertTrue(buses.stream().allMatch(b -> b.passengers() == 0));
     }
 
-
-   @Test
+    @Test
     void someoneGettingOffFreesTheSeatForSomeoneWaitingOnTheSameTick() {
         Bus bus = bus(1, false);                 // une seule place
         Customer rider = customer(0, 2);         // monte à 0, descend à 2
@@ -108,7 +107,6 @@ class CustomerTest {
         }
         assertEquals(Customer.State.IN_TRANSIT, waiting.state(), "la place libérée doit servir pendant le même tick");
     }
-
 
     @Test
     void busAtATerminalIsConsideredTurnedAround() {

@@ -124,7 +124,7 @@ public final class Simulation implements Runnable {
         // 3. Clients (en parallèle), en deux temps : tout le monde descend, puis tout le monde monte.
         //    parallelStream() ne rend la main qu'une fois tous les clients traités.
         // TODO Q13 (★★★) : remplacer parallelStream par un ExecutorService (invokeAll) — voir docs/QUESTIONS.md
-                customers.parallelStream().forEach(c -> c.getOffIfArrived(tick));
+        customers.parallelStream().forEach(c -> c.getOffIfArrived(tick));
         customers.parallelStream().forEach(c -> c.boardIfPossible(tick));
 
         // 4. Bilan (un par un)

@@ -62,7 +62,7 @@ public final class Customer implements Agent {
         this.fares = fares;
     }
 
-  /**
+   /**
      * Les deux temps d'un tick, dans l'ordre : descendre, puis monter. Le moteur, lui, fait
      * descendre <b>tous</b> les clients avant d'en faire monter un seul (voir {@code Simulation.tick}).
      */
@@ -83,7 +83,6 @@ public final class Customer implements Agent {
     public void boardIfPossible(long currentTick) {
         if (state() == State.WAITING && currentRide() instanceof BusRide ride) {
             tryToBoard(ride, currentTick);
-	
         }
     }
 

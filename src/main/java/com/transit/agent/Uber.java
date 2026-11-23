@@ -52,8 +52,7 @@ public final class Uber implements Agent {
         } else if (movement.isIdle()) {
             if (customer != null && route.isEmpty()) {
                 arrive(currentTick);
-            }
-            stopTicksLeft = Time.STOP_DWELL_TICKS - 1; // ce tick compte déjà dans l'arrêt
+                stopTicksLeft = Time.STOP_DWELL_TICKS - 1; // ce tick compte déjà dans l'arrêt
             } else if (!route.isEmpty()) {
                 movement.headTo(route.poll());
             } else if (customer == null) {
