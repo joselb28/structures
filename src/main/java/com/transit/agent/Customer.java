@@ -62,15 +62,28 @@ public final class Customer implements Agent {
         this.fares = fares;
     }
 
-    /** Courses en bus seulement : les courses en Uber sont pilotées par l'Uber. */
+  /**
+     * Les deux temps d'un tick, dans l'ordre : descendre, puis monter. Le moteur, lui, fait
+     * descendre <b>tous</b> les clients avant d'en faire monter un seul (voir {@code Simulation.tick}).
+     */
     @Override
     public void update(long currentTick) {
-        if (currentRide() instanceof BusRide ride) {
-            switch (state()) {
-                case WAITING -> tryToBoard(ride, currentTick);
-                case IN_TRANSIT -> getOffAtLastStop(ride, currentTick);
-                default -> { }
-            }
+        getOffIfArrived(currentTick);
+        boardIfPossible(currentTick);
+    }
+
+    /** Premier temps : un client en bus descend s'il est arrivé au dernier arrêt de sa course. */
+    public void getOffIfArrived(long currentTick) {
+        if (state() == State.IN_TRANSIT && currentRide() instanceof BusRide ride) {
+            getOffAtLastStop(ride, currentTick);
+        }
+    }
+
+    /** Second temps : un client qui attend un bus essaie de monter (les courses Uber sont pilotées par l'Uber). */
+    public void boardIfPossible(long currentTick) {
+        if (state() == State.WAITING && currentRide() instanceof BusRide ride) {
+            tryToBoard(ride, currentTick);
+	
         }
     }
 

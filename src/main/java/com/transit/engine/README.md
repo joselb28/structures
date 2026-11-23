@@ -9,7 +9,8 @@
 ## Un tick, en 4 phases
 1. **Bus** : avancent, un par un.
 2. **Uber** : en parallèle — les libres se disputent les clients (race n° 2).
-3. **Clients** : en parallèle — montent et descendent des bus (races n° 1 et 3).
+3. **Clients** : en parallèle, en deux temps — **d'abord toutes les descentes, puis toutes les montées**
+   (on laisse descendre avant de monter : une place libérée sert tout de suite). Races n° 1 et 3.
 4. **Bilan** : on retire les arrivés, on fait apparaître les nouveaux, on publie un `Snapshot`.
 
 Seules les phases 2 et 3 sont concurrentes : c'est voulu, pour que les races soient localisées.

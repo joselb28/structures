@@ -88,6 +88,28 @@ class CustomerTest {
         assertTrue(buses.stream().allMatch(b -> b.passengers() == 0));
     }
 
+
+   @Test
+    void someoneGettingOffFreesTheSeatForSomeoneWaitingOnTheSameTick() {
+        Bus bus = bus(1, false);                 // une seule place
+        Customer rider = customer(0, 2);         // monte à 0, descend à 2
+        Customer waiting = customer(2, 3);       // attend à 2 pour aller à 3
+        runUntil(() -> rider.state() == Customer.State.IN_TRANSIT, List.of(bus), List.of(rider));
+
+        // Comme le moteur : tout le monde descend, puis tout le monde monte. La cliente qui attend
+        // est évaluée en premier exprès : elle ne doit quand même pas rater la place libérée.
+        List<Customer> customers = List.of(waiting, rider);
+        while (rider.state() != Customer.State.ARRIVED) {
+            tick++;
+            bus.update(tick);
+            stops.refresh(List.of(bus));
+            customers.forEach(c -> c.getOffIfArrived(tick));
+            customers.forEach(c -> c.boardIfPossible(tick));
+        }
+        assertEquals(Customer.State.IN_TRANSIT, waiting.state(), "la place libérée doit servir pendant le même tick");
+    }
+
+
     @Test
     void busAtATerminalIsConsideredTurnedAround() {
         Bus atLastTerminal = bus(40, true); // arrêté à 3

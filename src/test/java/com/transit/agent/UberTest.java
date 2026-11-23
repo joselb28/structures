@@ -78,7 +78,7 @@ class UberTest {
         assertTrue(uber.isFree());
         assertEquals(1, metrics.delivered());
         // pris en charge à 4, déposé à 0 : 4 -> 2 -> 1 -> 0 = trois tronçons, trois minutes dans la voiture
-        assertEquals(FARES.uberRideCents(3L * Time.TICKS_PER_SIM_MINUTE), customer.paidCents());
+        assertEquals(FARES.uberRideCents(4L * Time.TICKS_PER_SIM_MINUTE), customer.paidCents());
         assertEquals(customer.paidCents(), metrics.uberRevenueCents());
     }
 
@@ -95,5 +95,23 @@ class UberTest {
         second.update(1);
         assertTrue(!first.isFree());
         assertTrue(second.isFree());
+    }
+
+    @Test
+    void stopsOneMinuteToPickUpTheCustomer() {
+        CityMap map = TestMaps.street();
+        Customer customer = new Customer(0, List.of(new UberRide(3, 0)), 0, new BusStops(), new Metrics(), FARES);
+        UberRequests requests = new UberRequests();
+        Uber uber = new Uber("U", map, 3, new Random(1), requests); // déjà sur place
+
+        int ticksAtPickup = 0;
+        for (long tick = 1; tick <= 3 * Time.STOP_DWELL_TICKS; tick++) {
+            requests.refresh(List.of(customer));
+            uber.update(tick);
+            if (customer.state() == Customer.State.IN_TRANSIT && uber.view().x() == map.node(3).x()) {
+                ticksAtPickup++; // client à bord, voiture encore au point de prise en charge
+            }
+        }
+        assertEquals(Time.STOP_DWELL_TICKS, ticksAtPickup, "une minute simulée d'arrêt pour faire monter le client");
     }
 }

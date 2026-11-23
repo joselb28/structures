@@ -2,6 +2,7 @@ package com.transit.agent;
 
 import com.transit.model.CityMap;
 import com.transit.model.Node;
+import com.transit.model.Time;
 import com.transit.trip.Roads;
 
 import java.util.ArrayDeque;
@@ -13,7 +14,8 @@ import java.util.Random;
 /**
  * Agent proactif. Libre, il réserve la demande ouverte la plus proche (ou erre, sans jamais faire
  * demi-tour sauf en cul-de-sac) ; ensuite il va chercher le client, le prend à bord, puis roule
- * jusqu'au dépôt, chaque fois par la route la plus rapide.
+ * jusqu'au dépôt, chaque fois par la route la plus rapide. Il s'arrête une minute simulée à la prise
+ * en charge et au dépôt, le temps que le client monte ou descende.
  */
 public final class Uber implements Agent {
 
@@ -26,6 +28,7 @@ public final class Uber implements Agent {
     private final Deque<Integer> route = new ArrayDeque<>();
     private Customer customer;
     private boolean onBoard;
+    private int stopTicksLeft;
     private int previousNode = -1;
 
     /** Un Uber transporte un client (ou un groupe qui voyage ensemble) à la fois. */
@@ -44,11 +47,14 @@ public final class Uber implements Agent {
         if (customer == null) {
             claimNearestRequest();
         }
-        if (movement.isIdle()) {
+        if (stopTicksLeft > 0) {
+            stopTicksLeft--; // arrêté le temps que le client monte ou descende
+        } else if (movement.isIdle()) {
             if (customer != null && route.isEmpty()) {
                 arrive(currentTick);
             }
-            if (!route.isEmpty()) {
+            stopTicksLeft = Time.STOP_DWELL_TICKS - 1; // ce tick compte déjà dans l'arrêt
+            } else if (!route.isEmpty()) {
                 movement.headTo(route.poll());
             } else if (customer == null) {
                 wanderToRandomNeighbor();
